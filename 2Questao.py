@@ -17,7 +17,7 @@ def size(altura, largura, nchannels):
 def imreadgray(im):
     image = mpimg.imread(im)
     # Array slicing. A aplicação de uma pseudo cor só é relevante em um único canal,
-    # por isso lum_img só recebe um canal. (Tanto faz o qual. R, G ou B)
+    # por isso lum_img só recebe um canal. (Tanto faz o qual. R, G ou B)!
     lum_img = image[:,:,0] 
     plt.imshow(lum_img, cmap="gray")
     plt.show()
