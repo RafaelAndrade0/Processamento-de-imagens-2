@@ -37,7 +37,6 @@ def rgb2gray(im, altura, largura):
             weight_average = (0.299*red + 0.587*green + 0.144*blue)/(0.299 + 0.587 + 0.144)
             im[row][col] = [weight_average]
             lum_img = im[:, :, 0]
-            #lum_img = im[..., :3]
     return lum_img
 
 
@@ -53,14 +52,15 @@ def negative(im, altura, largura):
 
 # Organizar Direito a função.
 def thresh(im, altura, largura, value):
-    #rgb2gray(im, altura, largura)
+    rgb2gray(im, altura, largura)
     numpy_iterator = np.nditer(im, flags=['multi_index'], op_flags=['writeonly'])
     while not numpy_iterator.finished:
         if numpy_iterator[0] > value:
-            numpy_iterator[0] = value
+            numpy_iterator[0] = 255
         else:
             numpy_iterator[0] = 0
         numpy_iterator.iternext()
+    return im
 
 
 # Garante que os valores fiquem "presos" entre 0 e 255
@@ -72,6 +72,7 @@ def truncate(value):
     return value
 
 
+# 'r' modifica o contraste e 'm' o brilho
 def contrast(im, r, m):
     shape = im.shape
     altura_largura = size(*shape)
@@ -84,7 +85,6 @@ def contrast(im, r, m):
             # Fator de correção do contraste
             f = (259*(r + 255)) / (255*(259 - r))
 
-            # r modifica o contraste e m modifica o brilho
             new_red = truncate(f*(red - 128) + 128 + m)
             new_green = truncate(f*(green - 128) + 128 + m)
             new_blue = truncate(f*(blue - 128) + 128 + m)
@@ -103,12 +103,12 @@ def main():
     tipo_da_imagem = img.dtype
     print(img.dtype)
 
+    # Verifica se a imagem está no formato desejado uint8 e a converte caso negativo
     if tipo_da_imagem != 'uint8':
         img = (img * 255).round().astype(np.uint8) 
-    #img = (img * 255).round().astype(np.uint8) # Conversão para uint8 (caso de png)
+
     print(img)
     print(img.dtype)
-
 
     # Converte a imagem en nd.array para uma imagem de fato
     imgplot = plt.imshow(img)
@@ -135,29 +135,27 @@ def main():
 
     # negative() função ==NEGATIVA DA IMAGEM==
     copy_negative = copy(img)
-    #negative_image = negative(copy_negative, altura_largura[0], altura_largura[1])
-    #plt.imshow(copy_negative)
-    #plt.show()
+    negative_image = negative(copy_negative, altura_largura[0], altura_largura[1])
+    plt.imshow(copy_negative)
+    plt.show()
 
 
     # Rg2toGray() função ==ESCALA DE CINZA DA IMAGEM==
-    #copy_grey = copy(img)
-    #grey_image = rgb2gray(copy_grey, altura_largura[0], altura_largura[1])
-    #print(grey_image)
-    #plt.imshow(grey_image, cmap=plt.cm.gray)
-    #plt.show()
-    #print(grey_image.dtype)
+    copy_grey = copy(img)
+    grey_image = rgb2gray(copy_grey, altura_largura[0], altura_largura[1])
+    plt.imshow(grey_image, cmap=plt.cm.gray)
+    plt.show()
     
 
     # thresh() função ==THRESHOLD DA IMAGEM==
-    #copy_thresh = copy(img)
-    #thresh_image = thresh(copy_thresh, altura_largura[0], altura_largura[1], 50)
-    #plt.imshow(copy_thresh, cmap=plt.cm.gray)
-    #plt.show()
+    copy_thresh = copy(img)
+    thresh_image = thresh(copy_thresh, altura_largura[0], altura_largura[1], 100)
+    plt.imshow(copy_thresh, cmap=plt.cm.gray)
+    plt.show()
 
     # contrast() função == MODIFICANDO O CONSTRASTE ==
     copy_contrast = copy(img)
-    contrast_image = contrast(copy_contrast, -50 , 1)
+    contrast_image = contrast(copy_contrast, -90 , 1)
     plt.imshow(contrast_image, vmin=0, vmax=255)
     plt.show()
 
