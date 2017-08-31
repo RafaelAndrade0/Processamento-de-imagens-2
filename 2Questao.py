@@ -73,8 +73,10 @@ def truncate(value):
 
 
 def contrast(im, r, m):
-    for row in range(612):
-        for col in range(566):
+    shape = im.shape
+    altura_largura = size(*shape)
+    for row in range(altura_largura[0]):
+        for col in range(altura_largura[1]):
             red = im[row][col][0]
             green = im[row][col][1]
             blue = im[row][col][2]
@@ -92,13 +94,18 @@ def contrast(im, r, m):
 
 
 def main():
-    path = 'Images/emilia.png'
+    path = 'Images/emiliaclarke.jpg'
+    #path = 'Images/emilia.png'
 
     # Exibe a imagem em nd.array
     img = mpimg.imread(path)
     print(img)
+    tipo_da_imagem = img.dtype
     print(img.dtype)
-    img = (img * 255).round().astype(np.uint8) # Conversão para uint8 (caso de png)
+
+    if tipo_da_imagem != 'uint8':
+        img = (img * 255).round().astype(np.uint8) 
+    #img = (img * 255).round().astype(np.uint8) # Conversão para uint8 (caso de png)
     print(img)
     print(img.dtype)
 
@@ -150,7 +157,7 @@ def main():
 
     # contrast() função == MODIFICANDO O CONSTRASTE ==
     copy_contrast = copy(img)
-    contrast_image = contrast(copy_contrast, 1 , 90)
+    contrast_image = contrast(copy_contrast, -50 , 1)
     plt.imshow(contrast_image, vmin=0, vmax=255)
     plt.show()
 
